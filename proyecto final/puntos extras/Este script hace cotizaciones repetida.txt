@@ -1,0 +1,243 @@
+Este script hace cotizaciones repetidas hasta que el usuario escriba Salir.
+Aplica recargos: edad (asegurado y cónyuge), hijos, propiedades (35% por propiedad sobre la cotización) y salario (5% sobre el salario).
+
+Líneas de código: 
+
+function cotizadorTKU() {
+
+  // ===============================
+  // Configuración base
+  // ===============================
+  var precio_base = 2000;
+
+  // Recargos por edad (asegurado)
+  var edad_18 = 0.10;
+  var edad_25 = 0.20;
+  var edad_50 = 0.30;
+
+  // Recargos por edad (cónyuge)
+  var casado_18 = 0.10;
+  var casado_25 = 0.20;
+  var casado_50 = 0.30;
+
+  // Recargo por hijos
+  var hijos_recargo = 0.20; // 20% por hijo sobre precio_base
+
+  // NUEVOS RECARGOS
+  var propiedad_recargo = 0.35; // 35% de la cotización por propiedad
+  var salario_recargo = 0.05;   // 5% sobre el salario del asegurado
+
+  // ===============================
+  // Bucle principal: repetir hasta "Salir"
+  // ===============================
+  while (true) {
+
+    var nombre = prompt('Ingrese su nombre (o escriba "Salir" para terminar):');
+    if (nombre === null) {
+      // Si cancelan el prompt, salimos también
+      break;
+    }
+
+    nombre = nombre.trim();
+    if (nombre.toUpperCase() === "SALIR") {
+      break;
+    }
+
+    // --------- Edad asegurado (Numeral 1) ---------
+    var edad = prompt("¿Cuántos años tiene? Ingrese solamente números");
+    if (edad === null) break;
+
+    var edad_numero = parseInt(edad);
+
+    if (isNaN(edad_numero)) {
+      alert("Edad inválida. Debe ingresar un número.");
+      continue;
+    }
+
+    if (edad_numero < 18) {
+      alert("No se puede cotizar: el asegurado debe ser mayor de edad (18+).");
+      continue;
+    }
+
+    // --------- Estado civil (Numeral 2) ---------
+    var casado = prompt("¿Está casado actualmente? (si/no)");
+    if (casado === null) break;
+
+    casado = casado.trim().toUpperCase();
+
+    var edad_conyuge_numero = 0;
+    if (casado === "SI") {
+      var edad_conyuge = prompt("¿Qué edad tiene su esposo/a? Ingrese solamente números");
+      if (edad_conyuge === null) break;
+
+      edad_conyuge_numero = parseInt(edad_conyuge);
+
+      if (isNaN(edad_conyuge_numero)) {
+        alert("Edad del cónyuge inválida. Debe ingresar un número.");
+        continue;
+      }
+    }
+
+    // --------- Hijos (Numeral 4) ---------
+    var hijos = prompt("¿Tiene hijos o hijas? (si/no)");
+    if (hijos === null) break;
+
+    hijos = hijos.trim().toUpperCase();
+
+    var cantidad_hijos = 0;
+    if (hijos === "SI") {
+      var ch = prompt("¿Cuántos hijos o hijas tiene? Ingrese solamente números");
+      if (ch === null) break;
+
+      cantidad_hijos = parseInt(ch);
+
+      if (isNaN(cantidad_hijos) || cantidad_hijos < 0) {
+        alert("Cantidad de hijos inválida. Debe ingresar un número entero >= 0.");
+        continue;
+      }
+    }
+
+    // --------- NUEVO: Propiedades ---------
+    var propiedades_txt = prompt("¿Cuántas propiedades tiene? Ingrese solamente números (0 si no tiene)");
+    if (propiedades_txt === null) break;
+
+    var propiedades = parseInt(propiedades_txt);
+    if (isNaN(propiedades) || propiedades < 0) {
+      alert("Cantidad de propiedades inválida. Debe ingresar un número entero >= 0.");
+      continue;
+    }
+
+    // --------- NUEVO: Salario ---------
+    var salario_txt = prompt("Ingrese su salario mensual (Q). Solo números.");
+    if (salario_txt === null) break;
+
+    var salario = parseFloat(salario_txt);
+    if (isNaN(salario) || salario < 0) {
+      alert("Salario inválido. Debe ingresar un número >= 0.");
+      continue;
+    }
+
+    // ===============================
+    // Cálculo de recargos
+    // ===============================
+    var recargo_total = 0;
+    var recargo = 0;
+
+    var recargo_asegurado = 0;
+    var recargo_conyuge = 0;
+    var recargo_hijos_total = 0;
+
+    var recargo_propiedades = 0;
+    var recargo_salario = 0;
+
+    // ----- Numeral 3: recargo edad asegurado -----
+    if (edad_numero >= 18 && edad_numero < 25) {
+      recargo_asegurado = precio_base * edad_18;
+    } else if (edad_numero >= 25 && edad_numero < 50) {
+      recargo_asegurado = precio_base * edad_25;
+    } else if (edad_numero >= 50) {
+      recargo_asegurado = precio_base * edad_50;
+    }
+
+    // ----- Numeral 3: recargo edad cónyuge -----
+    if (casado === "SI") {
+      if (edad_conyuge_numero >= 18 && edad_conyuge_numero < 25) {
+        recargo_conyuge = precio_base * casado_18;
+      } else if (edad_conyuge_numero >= 25 && edad_conyuge_numero < 50) {
+        recargo_conyuge = precio_base * casado_25;
+      } else if (edad_conyuge_numero >= 50) {
+        recargo_conyuge = precio_base * casado_50;
+      }
+    }
+
+    // ----- Numeral 4: recargo por hijos -----
+    if (cantidad_hijos > 0) {
+      recargo_hijos_total = precio_base * hijos_recargo * cantidad_hijos;
+    }
+
+    // ----- NUEVO: Recargo por propiedades -----
+    // "35% de la cotización por propiedad"
+    // Se interpreta como 35% del subtotal de cotización (base + recargos anteriores) por cada propiedad.
+    var subtotal_cotizacion = precio_base + recargo_asegurado + recargo_conyuge + recargo_hijos_total;
+    if (propiedades > 0) {
+      recargo_propiedades = subtotal_cotizacion * propiedad_recargo * propiedades;
+    }
+
+    // ----- NUEVO: Recargo por salario -----
+    // "5% sobre el salario del asegurado"
+    recargo_salario = salario * salario_recargo;
+
+    // Total recargos
+    recargo_total = recargo_asegurado + recargo_conyuge + recargo_hijos_total + recargo_propiedades + recargo_salario;
+
+    // Precio final
+    var precio_final = precio_base + recargo_total;
+
+    // ===============================
+    // Resultados
+    // ===============================
+    alert(
+      "Cotización para: " + nombre +
+      "\nPrecio base: Q " + precio_base.toFixed(2) +
+      "\nRecargo asegurado (edad): Q " + recargo_asegurado.toFixed(2) +
+      "\nRecargo cónyuge (edad): Q " + recargo_conyuge.toFixed(2) +
+      "\nRecargo hijos: Q " + recargo_hijos_total.toFixed(2) +
+      "\nRecargo propiedades: Q " + recargo_propiedades.toFixed(2) +
+      "\nRecargo salario: Q " + recargo_salario.toFixed(2) +
+      "\n--------------------------------" +
+      "\nRecargo total: Q " + recargo_total.toFixed(2) +
+      "\nPrecio final: Q " + precio_final.toFixed(2)
+    );
+
+  }
+
+  alert("Programa finalizado.");
+}
+
+// Ejecutar
+cotizadorTKU();
+
+DESCRIPCIÓN PROPIAS PALABRAS:
+
+La empresa de seguros TK-U realiza cotizaciones manuales y eso limita la cantidad diaria. 
+Se necesita automatizar el cálculo para que, a partir de un precio base, el sistema aplique recargos según las condiciones del asegurado.
+
+El programa debe permitir realizar varias cotizaciones seguidas y finalizar solo cuando el usuario escriba “Salir”. 
+Solo se cotiza a personas mayores de edad (18+).
+
+La cotización se calcula sumando al precio base los recargos por:
+1) Edad del asegurado (10%, 20% o 30% según rango).
+2) Si está casado, edad del cónyuge (mismo esquema de recargos).
+3) Cantidad de hijos (20% del precio base por cada hijo).
+Además se agregan nuevos recargos:
+4) Propiedades: 35% de la cotización por cada propiedad.
+5) Salario: 5% sobre el salario del asegurado.
+
+El resultado final muestra el desglose de recargos y el precio final para cada cotización.
+
+ALGORITMO COTIZADOR TK-U
+
+1. Iniciar un ciclo repetitivo.
+2. Pedir el nombre del asegurado.
+   2.1 Si el usuario escribe “Salir”, terminar el programa.
+3. Pedir la edad del asegurado y convertirla a número.
+   3.1 Si edad < 18, mostrar mensaje y volver al paso 2.
+4. Preguntar si está casado (si/no).
+   4.1 Si está casado, pedir edad del cónyuge y convertirla a número.
+5. Preguntar si tiene hijos (si/no).
+   5.1 Si tiene hijos, pedir cantidad de hijos y convertirla a número; si no, tomar 0.
+6. Pedir cantidad de propiedades y convertirla a número.
+7. Pedir salario del asegurado y convertirlo a número.
+8. Calcular recargo por edad del asegurado:
+   - 18-24: 10% del precio base
+   - 25-49: 20% del precio base
+   - 50+: 30% del precio base
+9. Si está casado, calcular recargo por edad del cónyuge usando los mismos rangos.
+10. Calcular recargo por hijos = cantidad_hijos * (20% del precio base).
+11. Calcular subtotal = precio_base + recargo_asegurado + recargo_conyuge + recargo_hijos.
+12. Calcular recargo por propiedades = propiedades * (35% del subtotal).
+13. Calcular recargo por salario = 5% del salario.
+14. Calcular recargo_total = suma de todos los recargos.
+15. Calcular precio_final = precio_base + recargo_total.
+16. Mostrar desglose y precio_final.
+17. Volver al paso 2 para una nueva cotización.

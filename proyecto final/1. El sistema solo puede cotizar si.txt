@@ -1,0 +1,20 @@
+1. El sistema solo puede cotizar si la persona a asegurar es mayor de edad.
+Por lo tanto:
+
+*Si edad >= 18 → el programa continúa y luego calcula recargos.
+
+*Si edad < 18 → el programa no debe calcular ni mostrar cotización (se detiene).
+
+Líneas de Código:
+var nombre = prompt ("Ingrese su nombre, por favor")
+var edad = prompt ("´¿Cuantos años tiene? Ingrese solamente números")
+
+
+var edad_numero = parseInt(edad)
+
+if  (edad_numero < 18) {
+
+alert( " No se Puede Cotizar: el Asegurado debe ser mayor de edad (18+).")
+ throw new Error ("Asegurado menor de Edad")
+
+} 

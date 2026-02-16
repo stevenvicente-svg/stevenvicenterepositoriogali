@@ -1,0 +1,41 @@
+2. La cotización parte de un precio base (precio_base = 2000) y se le agregan recargos dependiendo de las condiciones del asegurado.
+Las condiciones que pueden generar recargo son:
+
+Si está casado o no y, si está casado, la edad del cónyuge (también numeral 3)
+
+Cantidad de hijos (numeral 4)
+
+En este numeral 2 lo importante es dejar armado el flujo para:
+
+almacenar los recargos en recargo_total
+
+y finalmente calcular:
+precio_final = precio_base + recargo_total
+
+Líneas de Código:
+var nombre = prompt ("Ingrese su nombre, por favor")
+var edad = prompt ("´¿Cuantos años tiene? Ingrese solamente números")
+
+
+var edad_numero = parseInt(edad)
+
+if  (edad_numero < 18) {
+
+alert( " No se Puede Cotizar: el Asegurado debe ser mayor de edad (18+).")
+ throw new Error ("Asegurado menor de Edad")
+
+} 
+
+var edad_conyuge_numero = 0
+if ( "SI" == casado.toUppercase()){
+var edad conyuge = prompt ("¿ Qué edad tiene su esposo/a? Ingese solamente números")
+edad_conyuge_numero = parseInt(edad_conyuge)
+}
+
+var hijos = prompt("¿Tiene hijos o hijas? (si/no)")
+
+var cantidad_hijos = 0
+if ("SI" == hijos.toUpperCase()) {
+cantidad_hijos = parseInt(prompt("Cuántos hijos o hijas tiene? Ingrese solamente números"))
+}
+
